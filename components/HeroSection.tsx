@@ -2,8 +2,18 @@
 
 import { useEffect, useState } from 'react'
 
+interface Particle {
+  id: number
+  width: number
+  height: number
+  left: number
+  top: number
+  duration: number
+}
+
 export default function HeroSection() {
   const [displayText, setDisplayText] = useState('')
+  const [particles, setParticles] = useState<Particle[]>([])
   const fullText = 'BALAMURUGAN T'
   const subtitle = 'Frontend Developer | Problem Solver | Tech Enthusiast'
 
@@ -21,6 +31,19 @@ export default function HeroSection() {
     return () => clearInterval(interval)
   }, [])
 
+  // Generate particles only on client-side
+  useEffect(() => {
+    const generatedParticles: Particle[] = [...Array(50)].map((_, i) => ({
+      id: i,
+      width: Math.random() * 3 + 1,
+      height: Math.random() * 3 + 1,
+      left: Math.random() * 100,
+      top: Math.random() * 100,
+      duration: Math.random() * 5 + 5,
+    }))
+    setParticles(generatedParticles)
+  }, [])
+
   return (
     <section
       id="hero"
@@ -28,16 +51,16 @@ export default function HeroSection() {
     >
       {/* Animated background particles */}
       <div className="absolute inset-0 opacity-30">
-        {[...Array(50)].map((_, i) => (
+        {particles.map((particle) => (
           <div
-            key={i}
+            key={particle.id}
             className="absolute rounded-full bg-omnitrix-green animate-pulse"
             style={{
-              width: Math.random() * 3 + 1 + 'px',
-              height: Math.random() * 3 + 1 + 'px',
-              left: Math.random() * 100 + '%',
-              top: Math.random() * 100 + '%',
-              animation: `float ${Math.random() * 5 + 5}s ease-in-out infinite`,
+              width: particle.width + 'px',
+              height: particle.height + 'px',
+              left: particle.left + '%',
+              top: particle.top + '%',
+              animation: `float ${particle.duration}s ease-in-out infinite`,
             }}
           />
         ))}
